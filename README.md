@@ -7,7 +7,7 @@ This repository includes Python codes to solve linear bilevel problems.
 ```python
 git clone https://github.com/salvapineda/bilpy.git
 
-cd psopy
+cd bilpy
 ```
 
 ## Fortuny-Amat approach
