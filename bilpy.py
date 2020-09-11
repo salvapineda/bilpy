@@ -145,6 +145,16 @@ class blp:
     self.m = m
   
   def solve_ll(self,vector_x,lpsolver='cplex'):
+    """
+    Solves the lower-level problem of the bilevel model
+    Parameters
+    ----------
+    vector_x(list): values of the upper-level variables
+    lpsolver(str, default='cplex'): solver for the lower-level problem
+    Returns
+    -------
+    Objective function of the lower-level problem
+    """
     m = pe.ConcreteModel()
     # Sets
     m.i = pe.Set(initialize=range(self.nvar),ordered=True)
@@ -169,6 +179,18 @@ class blp:
     return sum(self.a[i]*vector_x[i] + self.b[i]*m.y[i].value for i in m.i)   
 
   def solve_reg(self,vector_ep = [10**6,10**4,10**2,1,0.1,0.01,0], lpsolver = 'cplex', nlpsolver='ipopt'):
+    """
+    Solves the bilevel model according to the regularization approach
+    Parameters
+    ----------
+    vector_eps(list): values of regularization parameter epsilon
+    lpsolver(str, default='cplex'): linear optimization solver
+    nlpsolver(str, default='ipopt'): non-linear optimization solver
+    Returns
+    -------
+    Objective function of the bilevel problem
+    Total computational time 
+    """
     start = time.time()
     self.gen_model_reg()
     for ep in vector_ep:
@@ -180,7 +202,19 @@ class blp:
     of = self.solve_ll(vector_x = [self.m.x[i].value for i in self.m.i],lpsolver=lpsolver)
     return of,time.time()-start
 
-  def solve_mip(self,M = 10**6, lpsolver = 'cplex', mipsolver='ipopt'):
+  def solve_mip(self,M = 10**6, lpsolver = 'cplex', mipsolver='cplex'):
+    """
+    Solves the bilevel model according to the bigM approach
+    Parameters
+    ----------
+    M(int, default=10**6): large enough constant
+    lpsolver(str, default='cplex'): linear optimization solver
+    mippsolver(str, default='cplex'): mixed-integer linear optimization solver
+    Returns
+    -------
+    Objective function of the bilevel problem
+    Total computational time 
+    """
     start = time.time()
     self.gen_model_mip()
     self.m.M = M
